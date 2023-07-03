@@ -16,12 +16,16 @@ void disableRawMode() {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &term);
 }
 
-void displayNote() {
-    // TODO
+void displayNote(Notes* notes, int day, int month, int year) {
+    // Search for the note in the notes
 }
 
-void setNote() {
-    
+void deleteNote(Notes* notes, int day, int month, int year) {
+    // Delete the note in the notes
+}
+
+void setNote(Notes* notes, int day, int month, int year) {
+    // Add a note in the notes
 }
 
 int isLeap(int year) {
