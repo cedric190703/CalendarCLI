@@ -3,24 +3,24 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
+#include <stdlib.h>
+#include <string.h>
 
 // Implement a linked list for storing all the notes for the calendar
-typedef struct Note {
+typedef struct Notes {
     int day;
     int month;
     int year;
-    char* message;
-} Note;
-
-typedef struct Notes {
-    Note *head;
-    Note *tail;
+    char message[42];
+    struct Notes* next;
 } Notes;
 
 void enableRawMode();
 void colorTerminal(int state);
-void displayCalendar(int day, int month, int year, int days[], char* months[]);
+void displayCalendar(Notes* notes, int day, int month, int year, int days[], char* months[]);
 int isLeap(int);
-void displayNote(Notes* notes, int day, int month, int year);
-void deleteNote(Notes* notes, int day, int month, int year);
-void setNote(Notes* notes, int day, int month, int year);
+void displayNote(Notes* notes);
+void deleteNote(Notes** notes);
+void setNote(Notes** notes);
+void freeNote(Notes* notes);
+int isNote(Notes* notes, int day, int month, int year);

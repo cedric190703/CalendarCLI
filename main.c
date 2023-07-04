@@ -8,11 +8,11 @@ char* months[] = {"", "January", "February", "March",
 "April", "May", "June", "July", "August", "September", 
 "October", "November", "December"};
 
-void display(int isLeapYear, int day, int month, int year) {
+void display(Notes* nodes, int isLeapYear, int day, int month, int year) {
     if(isLeapYear) {
-        displayCalendar(day, month, year, days_in_month_leap, months);
+        displayCalendar(nodes, day, month, year, days_in_month_leap, months);
     } else {
-        displayCalendar(day, month, year, days_in_month_no_leap, months);
+        displayCalendar(nodes, day, month, year, days_in_month_no_leap, months);
     }
 }
 
@@ -23,12 +23,28 @@ void displayInstructions() {
     printf("'Q' or 'q' -> quit the program.\n");
     printf("'A' or 'a' -> add a note in the calendar.\n");
     printf("'D' or 'd' -> delete a note in the calendar.\n");
-    printf("'S' or 's' -> display the first note in the month.\n");
+    printf("'S' or 's' -> display note.\n");
+    printf("'G' or 'g' -> refresh the calendar.\n");
+}
+
+void displayContent() {
+    // Clear the screen
+    system("clear");
+    displayInstructions();
+}
+
+void displaySeparator() {
+    printf("\n");
+    for(int i = 0; i < 26; i++) {
+        printf("-");
+    }
+    printf("\n");
 }
 
 int main() {
     // Get current time
     time_t currentTime = time(NULL);
+    Notes* notes = NULL;
 
     // Convert current time to local time
     struct tm* localTime = localtime(&currentTime);
@@ -44,48 +60,53 @@ int main() {
     int state = 0;
 
     displayInstructions();
-    display(isLeapYear, day, month, year);
+    display(notes, isLeapYear, day, month, year);
 
     while(1) {
         // Get key pressed
         read(STDIN_FILENO, &key, 1);
-        // Clear the screen
-        //clearScreen();
 
         switch(key) {
+            // To refresh the calendar
+            case 'G':
+            case 'g':
+                displayContent();
+                display(notes, isLeapYear, day, month, year);
+                break;
             // S -> show note
             case 'S':
             case 's':
-                // TODO
-                //displayNote()
+                displayContent();
+                display(notes, isLeapYear, day, month, year);
+                displaySeparator();
+                printf("Display a note.\n");
+                printf("\n");
+                displayNote(notes);
+                displaySeparator();
                 break;
             // N -> next page
             case 'N':
             case 'n':
-                // Clear the screen
-                system("clear");
-                displayInstructions();
+                displayContent();
                 month++;
                 if(month >= 12) {
                     year++;
                     month = 1;
                     isLeapYear = isLeap(year);
                 }
-                display(isLeapYear, day, month, year);
+                display(notes, isLeapYear, day, month, year);
                 break;
             // P -> previous page
             case 'P':
             case 'p':
-                // Clear the screen
-                system("clear");
-                displayInstructions();
+                displayContent();
                 month--;
                 if(month < 1) {
                     month = 12;
                     year--;
                     isLeapYear = isLeap(year);
                 }
-                display(isLeapYear, day, month, year);
+                display(notes, isLeapYear, day, month, year);
                 // Draw previous
                 break;
             // Q -> quit the program
@@ -96,13 +117,23 @@ int main() {
             // A -> add a note
             case 'A':
             case 'a':
-                // TODO
-                //setNote();
+                displayContent();
+                display(notes, isLeapYear, day, month, year);
+                displaySeparator();
+                printf("Add a note.\n");
+                printf("\n");
+                setNote(&notes);
+                displaySeparator();
                 break;
             case 'D':
             case 'd':
-                // TODO
-                //deleteNote()
+                displayContent();
+                display(notes, isLeapYear, day, month, year);
+                displaySeparator();
+                printf("Remove a note.\n");
+                printf("\n");
+                deleteNote(&notes);
+                displaySeparator();
                 break;
             default:
                 printf("Cannot use this key.\n");
@@ -112,5 +143,6 @@ int main() {
         }
     }
 
+    free(notes);
     return 0;
 }
